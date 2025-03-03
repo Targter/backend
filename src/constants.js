@@ -1,1 +1,1 @@
-export const DB_NAME = "gptcloneee";
+export const DB_NAME = "Marine0";
