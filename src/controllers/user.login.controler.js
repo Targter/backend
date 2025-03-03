@@ -473,6 +473,7 @@ export const handleClerkWebhook = async (req, res) => {
   }
 };
 export const UserAuthorization = async (req, res) => {
+  console.log("called:");
   if (!req.auth?.userId) {
     return res.status(401).json({ message: "User not authenticated" });
   }
