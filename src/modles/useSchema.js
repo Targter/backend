@@ -254,7 +254,10 @@ const userSchema = new mongoose.Schema({
     default: "trial",
   },
   usedTrialPremium: { type: Boolean, default: false },
-  subscriptionEndDate: { type: Date },
+   subscriptionEndDate: {
+    type: Date,
+    default: Date.now() + 12 * 30 * 24 * 60 * 60 * 1000,
+  },
   chats: {
     type: [chatSchema],
     validate: {
