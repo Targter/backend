@@ -102,7 +102,7 @@ export const updateSubscrition = async (req, res) => {
 export const renewSub = async (req, res) => {
   const { userId, subscriptionType } = req.body;
   console.log("Subscription renewal called");
-
+  console.log("usrId",userId);
   try {
     const user = await User.findById(userId);
     if (!user) {
