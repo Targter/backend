@@ -42,7 +42,7 @@
 //     next(error); // Pass the error to the next middleware
 //   }
 // });
-import { ClerkExpressWithAuth } from "@clerk/clerk-sdk-node";
+import { requireAuth } from "@clerk/express";
 
 // Middleware to protect routes
-export const VerifyMiddleWare = ClerkExpressWithAuth();
+export const VerifyMiddleWare = requireAuth();
