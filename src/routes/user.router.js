@@ -10,6 +10,7 @@ import { Router } from "express";
 //   UserAuthorization,
 //   logoutUser,
 // } from "../controllers/user.login.controler.js";
+import { UserAuthorization } from "../controllers/user.login.controler.js";
 import { handleClerkWebhook } from "../controllers/user.login.controler.js";
 import { VerifyMiddleWare } from "../middlewares/authentication.middleware.js";
 const router = Router();
@@ -18,7 +19,6 @@ const router = Router();
 // router.route("/verifyOtp").post(VerifyMail);
 // router.route("/Login").post(loginUser);
 // check user validation
-// router.route("/userAuth").post(VerifyMiddleWare, UserAuthorization);
 // Forget password:
 // router.route("/forgetPassword").post(initiatePasswordReset);
 // router.route("/varifymail").post(verifyOtp);
@@ -27,6 +27,7 @@ const router = Router();
 
 // i have to add the webhook in this
 
+router.route("/userAuth").post(VerifyMiddleWare, UserAuthorization);
 router.route("/clerk-webhook").post(handleClerkWebhook);
 
 export default router;

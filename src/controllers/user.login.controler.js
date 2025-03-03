@@ -318,11 +318,34 @@
 // };
 
 // // user Authorization
-// export const UserAuthorization = async (req, res) => {
-//   // console.log("useris Authenticated");
-//   // console.log(req.user);
-//   res.json({ message: "Authenticated", user: req.user, authenticated: true });
-// };
+// import { clerkClient } from "@clerk/clerk-sdk-node";
+// import User from "../modles/useSchema.js";
+export const UserAuthorization = async (req, res) => {
+  if (!req.auth?.userId) {
+    return res.status(401).json({ message: "User not authenticated" });
+  }
+
+  try {
+    console.log(req.auth.userId);
+    const userId = req.auth.userId;
+    // const user = await clerkClient.users.getUser(req.auth.userId);
+    // console.log(user);
+    const user = await User.findOne({ clerkId: userId });
+    console.log(user);
+    if (!user) {
+      return res.status(404).json({ message: "Please Login Again" });
+    }
+    res.json({
+      message: "Authenticated",
+      user,
+      authenticated: true,
+    });
+  } catch (error) {
+    console.error("Error fetching user details:", error);
+    res.status(500).json({ message: "Failed to fetch user details" });
+  }
+};
+
 // // ForgetPassword
 // export const initiatePasswordReset = async (req, res) => {
 //   const session = await mongoose.startSession();
@@ -426,6 +449,7 @@ const CLERK_WEBHOOK_SECRET = process.env.CLERK_WEBHOOK_SECRET;
  */
 export const handleClerkWebhook = async (req, res) => {
   try {
+    console.log("this called......");
     const payload = req.body;
     const headers = req.headers;
 
