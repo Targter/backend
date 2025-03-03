@@ -44,5 +44,13 @@
 // });
 import { requireAuth } from "@clerk/express";
 
-// Middleware to protect routes
-export const VerifyMiddleWare = requireAuth();
+// // Middleware to protect routes
+// export const VerifyMiddleWare = requireAuth();
+export const VerifyMiddleWare = async (req, res, next) => {
+  try {
+    await requireAuth()(req, res, next);
+  } catch (error) {
+    console.error("Authentication Error:", error.message);
+    res.status(401).json({ error: "Unauthorized access" });
+  }
+};
