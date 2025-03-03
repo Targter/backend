@@ -3,7 +3,7 @@ import cors from "cors";
 import cookieParser from "cookie-parser";
 
 const app = express();
-
+// updated uerl
 const allowedOrigins = [
   process.env.CORS_ORIGIN || "https://abmarineai.vercel.app",
 ];
