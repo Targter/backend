@@ -1,25 +1,35 @@
-import mongoose from "mongoose";
-import UserHistory from "../modles/userHistory.js"; // Import the UserHistory model
 import User from "../modles/useSchema.js";
 
 const addOrUpdateChat = async (req, res) => {
   const { userId, chatId, messages } = req.body;
   console.log("messagees:", messages);
-
+  // console.log("title:", title);
   console.log("this called");
   if (!userId || !chatId || !Array.isArray(messages)) {
     return res.status(400).json({
       error: "userId, chatId, and an array of messages are required",
     });
   }
+
   // trial user can no update the chats
   try {
     // Fetch user data to check subscription type
-    const user = await User.findById(userId);
+    const user = await User.findById(userId).select(
+      "subscriptionType subscriptionEndDate chats"
+    );
     if (!user) {
       return res.status(404).json({ error: "User not found" });
     }
     console.log("user here");
+    const isSubscriptionExpired = user.subscriptionEndDate < new Date();
+    const isTrialUser = user.subscriptionType === "trial";
+
+    // Block trial/expired users from updating chats
+    if (isTrialUser || isSubscriptionExpired) {
+      return res.status(403).json({
+        error: "Trial users or expired subscriptions cannot save chat history",
+      });
+    }
 
     let chat = user.chats.find((c) => c.id === chatId);
     // console.log("chatHere:", chat);
@@ -28,11 +38,11 @@ const addOrUpdateChat = async (req, res) => {
       if (user.subscriptionType === "trial" && user.chats.length >= 1) {
         throw new Error("Trial users can only have one chat.");
       }
-
+      console.log("new Chat Created:");
       chat = {
         id: chatId,
         title: "New Chat", // Default title
-        messages: [],
+        messages: messages,
         createdAt: Date.now(),
         updatedAt: Date.now(),
       };
@@ -44,8 +54,8 @@ const addOrUpdateChat = async (req, res) => {
     const validMessages = messages.map((msg) => ({
       role: msg.role,
       content: msg.content,
-      images: msg.images,
-      _id: new mongoose.Types.ObjectId(), // Ensure unique _id if required
+      images: msg.images || [],
+      timestamp: Date.now(),
     }));
 
     chat.messages.push(...validMessages); // Spread messages instead of pushing an array
@@ -57,8 +67,18 @@ const addOrUpdateChat = async (req, res) => {
     }
 
     await user.save();
+    console.log("Chat updated succesfully");
 
-    return { success: true, message: "Chat updated successfully", chat };
+    return {
+      success: true,
+      message: "Chat updated successfully",
+      chat: {
+        id: chat.id,
+        title: chat.title,
+        messageCount: chat.messages.length,
+        updatedAt: chat.updatedAt,
+      },
+    };
   } catch (error) {
     console.error("Error handling user history on login:", error);
     res.status(500).json({
@@ -99,10 +119,12 @@ const fetchUserTitle = async (req, res) => {
     // }
 
     // Extract the titles from the chats
-    const titles = user.chats.map((chat) => ({
-      id: chat.id,
-      title: chat.title,
-    }));
+    const titles = user.chats
+      .sort((a, b) => b.createdAt - a.createdAt)
+      .map((chat) => ({
+        id: chat.id,
+        title: chat.title,
+      }));
 
     console.log("user:s:", user);
     res.status(200).json({ titles });
@@ -229,13 +251,16 @@ const fetchChatHistory = async (req, res) => {
   }
 
   try {
-    const user = await User.findById(userId);
+    const user = await User.findById(userId)
+      .select("subscriptionType subscriptionEndDate chats")
+      .lean();
 
     if (!user) {
       return res.status(404).json({ error: "User not found" });
     }
 
     // Restrict chat history access for trial users
+    const isExpired = new Date(user.subscriptionEndDate) < new Date();
     if (user.subscriptionType === "trial") {
       return res.status(403).json({
         error:
@@ -248,7 +273,7 @@ const fetchChatHistory = async (req, res) => {
     if (!chat) {
       return res.status(404).json({ error: "Chat not found" });
     }
-
+    console.log("fetchedChat:", chat);
     res.json({ messages: chat.messages });
   } catch (error) {
     console.error("Error fetching chat history:", error);
