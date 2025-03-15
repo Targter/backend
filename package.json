@@ -6,7 +6,7 @@
   "scripts": {
     "start": "index.js",
     "dev": "nodemon -r dotenv/config index.js",
-    "build": "echo 'No build step required'"
+    "build": "node index.js"
   },
   "keywords": [],
   "author": "",
