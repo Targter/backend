@@ -88,10 +88,9 @@ const addOrUpdateChat = async (req, res) => {
 };
 
 const fetchUserTitle = async (req, res) => {
-  console.log("req:",req.query.userId);
+  console.log("titles");
   const userId = req.query.userId; // Assuming the user ID is passed as a query parameter
 
-    console.log("titles:");
   if (!userId) {
     return res.status(400).json({ error: "User ID is required" });
   }
@@ -111,25 +110,12 @@ const fetchUserTitle = async (req, res) => {
       });
     }
 
-    // Find the user's history
-    // const userHistory = await UserHistory.findOne({ user: userId });
-
-    // if (!userHistory) {
-    //   return res
-    //     .status(404)
-    //     .json({ error: "No chat history found for this user" });
-    // }
-
-    // Extract the titles from the chats
-    const titles = user.chats
-      .sort((a, b) => b.createdAt - a.createdAt)
-      .map((chat) => ({
-        id: chat.id,
-        title: chat.title,
-      }));
-
+    const titles = user.chats.map((chat) => ({
+      id: chat.id,
+      title: chat.title,
+    }));
     console.log("titles:", titles);
-    console.log("user:s:", user);
+    // console.log("users:", user);a
     res.status(200).json({ titles });
   } catch (error) {
     console.error("Error fetching chat titles:", error);
