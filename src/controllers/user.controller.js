@@ -126,6 +126,7 @@ const fetchUserTitle = async (req, res) => {
         title: chat.title,
       }));
 
+    console.log("titles:", titles);
     console.log("user:s:", user);
     res.status(200).json({ titles });
   } catch (error) {
