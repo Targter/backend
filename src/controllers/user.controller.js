@@ -90,6 +90,7 @@ const addOrUpdateChat = async (req, res) => {
 const fetchUserTitle = async (req, res) => {
   const userId = req.query.userId; // Assuming the user ID is passed as a query parameter
 
+    console.log("titles:");
   if (!userId) {
     return res.status(400).json({ error: "User ID is required" });
   }
