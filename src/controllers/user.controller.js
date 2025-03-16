@@ -88,7 +88,7 @@ const addOrUpdateChat = async (req, res) => {
 };
 
 const fetchUserTitle = async (req, res) => {
-  console.log("req:",req.query,userId);
+  console.log("req:",req.query.userId);
   const userId = req.query.userId; // Assuming the user ID is passed as a query parameter
 
     console.log("titles:");
