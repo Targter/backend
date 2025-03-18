@@ -6,7 +6,7 @@ import {
   fetchUserTitle,
   updateChatTitle,
 } from "../controllers/user.controller.js";
-import { VerifyMiddleWare } from "../middlewares/authentication.middleware.js";
+// import { VerifyMiddleWare } from "../middlewares/authentication.middleware.js";
 const router = Router();
 
 router.route("/updateData").post( addOrUpdateChat);
