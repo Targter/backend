@@ -69,16 +69,26 @@ const addOrUpdateChat = async (req, res) => {
     await user.save();
     console.log("Chat updated succesfully");
 
-    return {
-      success: true,
-      message: "Chat updated successfully",
-      chat: {
+    // return {
+    //   success: true,
+    //   message: "Chat updated successfully",
+    //   chat: {
+    //     id: chat.id,
+    //     title: chat.title,
+    //     messageCount: chat.messages.length,
+    //     updatedAt: chat.updatedAt,
+    //   },
+    // };
+    return res.status(200).json({
+  success: true,
+  message: "Chat updated successfully",
+ chat: {
         id: chat.id,
         title: chat.title,
         messageCount: chat.messages.length,
         updatedAt: chat.updatedAt,
       },
-    };
+});
   } catch (error) {
     console.error("Error handling user history on login:", error);
     res.status(500).json({
