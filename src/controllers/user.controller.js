@@ -2,7 +2,7 @@ import User from "../modles/useSchema.js";
 
 const addOrUpdateChat = async (req, res) => {
   const { userId, chatId, messages } = req.body;
-  console.log("messagees:", messages);
+  console.log("messagees:", userId);
   // console.log("title:", title);
   console.log("this called");
   if (!userId || !chatId || !Array.isArray(messages)) {
